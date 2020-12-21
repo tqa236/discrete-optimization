@@ -1,1 +1,1 @@
-# discrete-optimization
+# Discrete Optimization
