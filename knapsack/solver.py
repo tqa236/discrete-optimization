@@ -22,7 +22,28 @@ def parse_input(input_data):
     return items, capacity
 
 
+def maximum_value(items, capacity, taken, item=None):
+    """Fill the knapsack with the highest values item."""
+    if capacity < 0:
+        taken[item.index] = 0
+        return -item.value
+    if not items or capacity == 0:
+        return 0, []
+    leave_item_value = maximum_value(capacity, items[1:])
+    take_item_value = (
+        maximum_value(capacity - items[0].weight, items[1:], items[0]) + items[0].value
+    )
+    if leave_item_value >= take_item_value:
+        taken[item.index] = 0
+        max_value = leave_item_value
+    else:
+        taken[item.index] = 1
+        max_value = take_item_value
+    return max_value, taken
+
+
 def solve_it(items, capacity):
+    """Naive solution for knapsack problem."""
     value = 0
     weight = 0
     taken = [0] * len(items)
