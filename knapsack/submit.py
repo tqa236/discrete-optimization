@@ -3,11 +3,12 @@
 
 from __future__ import print_function
 
+import argparse
 import json
-import time
 import os
+import sys
+import time
 from collections import namedtuple
-
 
 # Python 2/3 compatibility
 # Python 2:
@@ -27,7 +28,6 @@ try:
 except:
     pass
 
-import sys
 
 # Python 2:
 if sys.version_info < (3, 0):
@@ -444,7 +444,6 @@ def main(args):
         login_dialog(metadata.assignment_key, results, args.credentials)
 
 
-import argparse
 
 
 def build_parser():
