@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from copy import deepcopy
 from collections import namedtuple
 
 Item = namedtuple("Item", ["index", "value", "weight"])
@@ -25,26 +24,35 @@ def parse_input(input_data):
 
 def maximum_value(items, capacity):
     n = len(items)
+    print(items)
+    print(n)
     optimal = [0]
     value = [[0 for w in range(capacity + 1)] for _ in range(2)]
     for i in range(1, n + 1):
         current_weight = items[i - 1].weight
+        value[i % 2][1:current_weight] = value[(i - 1) % 2][1:current_weight]
         for w in range(current_weight, capacity + 1):
             value[i % 2][w] = max(
-                items[i - 1].value + value[(i - 1) % 2][w - items[i - 1].weight],
+                items[i - 1].value + value[(i - 1) % 2][w - current_weight],
                 value[(i - 1) % 2][w],
             )
-        value[i % 2][:current_weight] = value[(i - 1) % 2][:current_weight]
+        print(value[i % 2])
         optimal.append(value[i % 2][-1])
     res = value[n % 2][-1]
     taken = [0 for _ in items]
+    print(len(optimal), res)
+    print(optimal)
     for i in range(n, 0, -1):
+        print(i, optimal[i - 1], res)
         if res <= 0:
             break
-        if res == optimal[i - 1]:
+        if res <= optimal[i - 1]:
             continue
-        taken[i - 1] = 1
-        res = res - items[i - 1].value
+        else:
+            taken[i - 1] = 1
+            res = res - items[i - 1].value
+
+    print(taken)
     return value[n % 2][-1], taken
 
 
