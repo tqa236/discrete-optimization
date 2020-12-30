@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
 from collections import namedtuple
 
 Item = namedtuple("Item", ["index", "value", "weight"])
@@ -24,31 +25,30 @@ def parse_input(input_data):
 
 def maximum_value(items, capacity):
     n = len(items)
-    K = [[0 for w in range(capacity + 1)] for i in range(n + 1)]
-    for i in range(n + 1):
+    optimal = [0]
+    value = [[0 for w in range(capacity + 1)] for _ in range(2)]
+    for i in range(1, n + 1):
         for w in range(capacity + 1):
-            if i == 0 or w == 0:
-                K[i][w] = 0
+            if w == 0:
+                value[i % 2][w] = 0
             elif items[i - 1].weight <= w:
-                K[i][w] = max(
-                    items[i - 1].value + K[i - 1][w - items[i - 1].weight], K[i - 1][w]
+                value[i % 2][w] = max(
+                    items[i - 1].value + value[(i - 1) % 2][w - items[i - 1].weight],
+                    value[(i - 1) % 2][w],
                 )
             else:
-                K[i][w] = K[i - 1][w]
-
-    res = K[-1][-1]
+                value[i % 2][w] = value[(i - 1) % 2][w]
+        optimal.append(value[i % 2][-1])
+    res = value[n % 2][-1]
     taken = [0 for _ in items]
-    w = capacity
     for i in range(n, 0, -1):
         if res <= 0:
             break
-        if res == K[i - 1][w]:
+        if res == optimal[i - 1]:
             continue
-        else:
-            taken[i - 1] = 1
-            res = res - items[i - 1].value
-            w = w - items[i - 1].weight
-    return K[-1][-1], taken
+        taken[i - 1] = 1
+        res = res - items[i - 1].value
+    return value[n % 2][-1], taken
 
 
 def print_output(value, taken):
