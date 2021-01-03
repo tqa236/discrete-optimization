@@ -17,7 +17,7 @@ def parse_input(input_data):
     return num_nodes, edges
 
 
-def graph_coloring(num_nodes, connections, k):
+def graph_coloring(num_nodes, connections, k, timeout=None):
     model = cp_model.CpModel()
     nodes = [model.NewIntVar(0, k - 1, f"x{i}") for i in range(num_nodes)]
 
@@ -27,9 +27,12 @@ def graph_coloring(num_nodes, connections, k):
             model.Add(nodes[conn[1]] == 1)
         else:
             model.Add(nodes[conn[0]] != nodes[conn[1]])
-    model.Minimize(sum(nodes))
     solver = cp_model.CpSolver()
-    solver.Solve(model)
+    if timeout:
+        solver.parameters.max_time_in_seconds = timeout
+    status = solver.Solve(model)
+    if status != cp_model.OPTIMAL:
+        return None
     colors = [solver.Value(node) for node in nodes]
     return colors
 
@@ -43,7 +46,27 @@ def print_output(num_nodes, solution):
 def find_minimum_colors(num_nodes, edges):
     k = num_nodes
     solution = graph_coloring(num_nodes, edges, k)
-    return solution, len(set(solution))
+    timeout = 120
+    while solution:
+        print(k)
+        upper_bound_solution = solution
+        k = len(set(solution)) // 2
+        solution = graph_coloring(num_nodes, edges, k, timeout)
+
+    upper_bound = k * 2
+    lower_bound = k
+    while abs(upper_bound - lower_bound) > 1:
+        k = (lower_bound + upper_bound + 1) // 2
+        print(k, lower_bound, upper_bound)
+        if k == upper_bound:
+            break
+        solution = graph_coloring(num_nodes, edges, k, timeout)
+        if solution:
+            upper_bound = k
+            upper_bound_solution = solution
+        else:
+            lower_bound = k
+    return upper_bound_solution, len(set(upper_bound_solution))
 
 
 def solve_it(input_data):
