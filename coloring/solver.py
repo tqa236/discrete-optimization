@@ -7,64 +7,48 @@ from ortools.sat.python import cp_model
 def parse_input(input_data):
     lines = input_data.split("\n")
     first_line = lines[0].split()
-    node_count = int(first_line[0])
+    num_nodes = int(first_line[0])
     edge_count = int(first_line[1])
     edges = []
     for i in range(1, edge_count + 1):
         line = lines[i]
         parts = line.split()
         edges.append((int(parts[0]), int(parts[1])))
-    return node_count, edges
-
-
-class SolutionPrinter(cp_model.CpSolverSolutionCallback):
-    def __init__(self, variables):
-        cp_model.CpSolverSolutionCallback.__init__(self)
-        self.__variables = variables
-        self.colors = range(10)
-        self.node_colors = []
-
-    def OnSolutionCallback(self):
-        for v in self.__variables:
-            self.node_colors.append(self.colors[self.Value(v)])
-        self.StopSearch()
-
-    def SolutionCount(self):
-        return self.node_colors
+    return num_nodes, edges
 
 
 def graph_coloring(num_nodes, connections, k):
     model = cp_model.CpModel()
-    nodes = [model.NewIntVar(0, k - 1, "x%i" % i) for i in range(num_nodes)]
+    nodes = [model.NewIntVar(0, k - 1, f"x{i}") for i in range(num_nodes)]
 
-    for conn in connections:
-        model.Add(nodes[conn[0]] != nodes[conn[1]])
-
+    for i, conn in enumerate(connections):
+        if i == 0:
+            model.Add(nodes[conn[0]] == 0)
+            model.Add(nodes[conn[1]] == 1)
+        else:
+            model.Add(nodes[conn[0]] != nodes[conn[1]])
+    model.Minimize(sum(nodes))
     solver = cp_model.CpSolver()
-    solution_printer = SolutionPrinter(nodes)
-    solver.SearchForAllSolutions(model, solution_printer)
-    colors = solution_printer.SolutionCount()
+    solver.Solve(model)
+    colors = [solver.Value(node) for node in nodes]
     return colors
 
 
-def print_output(node_count, solution):
-    output_data = str(node_count) + " " + str(1) + "\n"
+def print_output(num_nodes, solution):
+    output_data = str(num_nodes) + " " + str(0) + "\n"
     output_data += " ".join(map(str, solution))
     return output_data
 
 
-def find_minimum_colors(node_count, edges):
-    k = 1
-    solution = None
-    while not solution and k < node_count:
-        k += 1
-        solution = graph_coloring(node_count, edges, k)
-    return solution, k
+def find_minimum_colors(num_nodes, edges):
+    k = num_nodes
+    solution = graph_coloring(num_nodes, edges, k)
+    return solution, len(set(solution))
 
 
 def solve_it(input_data):
-    node_count, edges = parse_input(input_data)
-    solution, k = find_minimum_colors(node_count, edges)
+    num_nodes, edges = parse_input(input_data)
+    solution, k = find_minimum_colors(num_nodes, edges)
     output_data = print_output(k, solution)
     return output_data
 
