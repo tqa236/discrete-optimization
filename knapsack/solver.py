@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import namedtuple
+
 from ortools.algorithms import pywrapknapsack_solver
 
 Item = namedtuple("Item", ["index", "value", "weight"])

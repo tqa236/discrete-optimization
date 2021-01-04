@@ -13,18 +13,19 @@ from collections import namedtuple
 # Python 2/3 compatibility
 # Python 2:
 try:
-    from urlparse import urlparse
     from urllib import urlencode
-    from urllib2 import urlopen, Request, HTTPError
+
+    from urllib2 import HTTPError, Request, urlopen
+    from urlparse import urlparse
 except:
     pass
 
 # Python 3:
 try:
     from time import process_time
-    from urllib.parse import urlparse, urlencode
-    from urllib.request import urlopen, Request
     from urllib.error import HTTPError
+    from urllib.parse import urlencode, urlparse
+    from urllib.request import Request, urlopen
 except:
     pass
 

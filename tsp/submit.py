@@ -4,30 +4,31 @@
 from __future__ import print_function
 
 import json
-import time
 import os
+import time
 from collections import namedtuple
-
 
 # Python 2/3 compatibility
 # Python 2:
 try:
-    from urlparse import urlparse
     from urllib import urlencode
-    from urllib2 import urlopen, Request, HTTPError
+
+    from urllib2 import HTTPError, Request, urlopen
+    from urlparse import urlparse
 except:
     pass
 
 # Python 3:
 try:
     from time import process_time
-    from urllib.parse import urlparse, urlencode
-    from urllib.request import urlopen, Request
     from urllib.error import HTTPError
+    from urllib.parse import urlencode, urlparse
+    from urllib.request import Request, urlopen
 except:
     pass
 
 import sys
+
 # Python 2:
 if sys.version_info < (3, 0):
     def process_time():
@@ -418,6 +419,8 @@ def main(args):
 
 
 import argparse
+
+
 def build_parser():
     '''
     Builds an argument parser for the CLI

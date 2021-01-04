@@ -1,6 +1,7 @@
 import unittest
 
-from solver import parse_input, maximum_value, knapsack_solver, parse_or_tools_input
+from solver import (knapsack_solver, maximum_value, parse_input,
+                    parse_or_tools_input)
 
 
 class Test(unittest.TestCase):
