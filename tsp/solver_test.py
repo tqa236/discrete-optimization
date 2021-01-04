@@ -8,9 +8,9 @@ class Test(unittest.TestCase):
         file_location = "data/tsp_5_1"
         with open(file_location, "r") as input_data_file:
             input_data = input_data_file.read()
-        nodeCount, points = parse_input(input_data)
-        obj, solution = tsp(nodeCount, points)
-        self.assertEqual(obj, 2)
+        data = parse_input(input_data)
+        route_distance, path = tsp(data)
+        self.assertEqual(route_distance, 4.0)
 
 
 if __name__ == "__main__":
