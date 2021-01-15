@@ -5,8 +5,7 @@ import math
 import sys
 from collections import namedtuple
 
-from ortools.constraint_solver import routing_enums_pb2
-from ortools.constraint_solver import pywrapcp
+from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 
 Point = namedtuple("Point", ["x", "y"])
 
